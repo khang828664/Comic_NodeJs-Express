@@ -2,25 +2,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
-const bodyParser = require("body-parser");
-const multer = require("multer");
 const user_1 = require("./routes/user");
+const comic_1 = require("./routes/comic");
+const Image_1 = require("./routes/Image");
 const index_1 = require("./routes/index");
 const debug = require('debug')('my express app');
 const app = express();
-const upload = multer();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(bodyParser.json({ type: 'application/*+json' }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.raw({ type: 'application/*+json' }));
-app.use(upload.array());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.raw());
+// To Using form data
 app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index_1.default);
-app.use('/api', user_1.default);
-//app.use('/api', comic);
+app.use('/api/users', user_1.default);
+app.use('/api/comic', comic_1.default);
+app.use('/api/image', Image_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     const err = new Error('Not Found');

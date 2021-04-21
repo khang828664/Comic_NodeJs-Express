@@ -1,33 +1,31 @@
 import * as express from 'express';
 import { AddressInfo } from "net";
 import * as path from 'path';
-import * as Services from "./Db/DbConnect"
-import bodyParser = require('body-parser')
-import multer = require('multer');
-
-
-
 import users from './routes/user'
+import comic from './routes/comic'
+import image from './routes/Image'
 import index from './routes/index'
-import { parse } from 'node:url';
+import chapter from './routes/Chapter'
 
 const debug = require('debug')('my express app');
 const app = express();
-const upload = multer();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(bodyParser.json({ type: 'application/*+json' }))
-app.use(bodyParser.urlencoded({ extended: true  }));
-app.use(bodyParser.raw({ type: 'application/*+json' }))
-app.use(upload.array());
-app.use(express.static('public'));
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use(express.raw())
+// To Using form data
+app.use(express.static('public'))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index)
-app.use('/api', users);
-//app.use('/api', comic);
+app.use('/api/users', users)
+app.use('/api/comic', comic)
+app.use('/api/image',image)
+app.use('/api/chapter',chapter)
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -61,7 +59,6 @@ app.use((err, req, res, next) => { // eslint-disable-line @typescript-eslint/no-
 });
 
 app.set('port', process.env.PORT || 3000);
-
 const server = app.listen(app.get('port'), function () {
     debug(`Express server listening on port ${(server.address() as AddressInfo).port}`);
 });

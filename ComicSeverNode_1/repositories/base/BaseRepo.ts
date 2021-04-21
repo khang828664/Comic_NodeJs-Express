@@ -2,6 +2,7 @@ import {IWrite} from '../IWrite'
 import {IRead} from '../IRead'
 import {User} from '../../entities/UserModel' 
 import  * as Mongo  from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 interface BaseObjectInset<T> {
 _id : Mongo.ObjectID
@@ -10,13 +11,16 @@ isDelete:boolean
 export abstract class  BaseRepository<T> implements IWrite<T>, IRead<T> 
 {
     public readonly _collection  : Mongo.Collection
+    public readonly _Db : Mongo.Db
     constructor(db: Mongo.Db, collectionName: string) {
         this._collection = db.collection(collectionName);
+        this._Db = db
       }
-  
-    async create (item: T): Promise<boolean> {
-        const result: Mongo.InsertOneWriteOpResult<BaseObjectInset<T>> = await this._collection.insertOne(item);
-        return !!result.result.ok;
+    
+    getDb = () => this._Db
+    async create (item: T): Promise<ObjectId> {
+        const result: Mongo.InsertOneWriteOpResult<BaseObjectInset<T>> = await (await this._collection.insertOne(item));
+        return result.insertedId;
     }
     async update(id: Mongo.ObjectId, item: T): Promise<boolean> {
         try {let filterMethod: Mongo.FilterQuery<T> = await this._collection.findOne({ _id: id })
@@ -52,6 +56,14 @@ export abstract class  BaseRepository<T> implements IWrite<T>, IRead<T>
         return result
         } catch (err) {
         console.error(err)
+        return err
+        }
+    }
+    async findOneByCondition(param: T):Promise<T> {
+        try{
+            const result = await this._collection.findOne(param)
+        }
+        catch (err) {
         return err
         }
     }

@@ -3,17 +3,17 @@ import *as mongo from 'mongodb'
 import bodyParser = require("body-parser")
 import {User} from   '../../entities/UserModel'
 import *as UserServices from '../../Db/UserServices'
-import { userInfo } from "node:os"
-import { ConnectionStates, _UpdateQuery } from "mongoose"
-import { TIMEOUT } from "node:dns"
-//Function map object
 
-export async function GetAllUser() {
-    return await UserServices.getUser()
+export async function GetAllUser(req:express.Request,res:express.Response) {
+    try {
+        let userData: User[] = await UserServices.getUser()
+        res.status(200).send({ data: userData })
+    }catch(err){
+        console.log(err)
+        res.status(204).send(err.toString())
+    }
 }
 export async function GetUserByUserName(req:express.Request, res:express.Response ) {
-
-
     let param = req.query
     console.log(param)
     if (JSON.stringify(req.query) === "{}") {
@@ -22,7 +22,7 @@ export async function GetUserByUserName(req:express.Request, res:express.Respons
     try {
         await UserServices.getUserByUserName(param.username.toString())
             .then((user: User) => {
-                res.status(200).json(user)
+                res.status(200).json({data: user})
             })
             .catch(error => {
                 console.error(error)
@@ -41,7 +41,7 @@ export async function GetUserByCondition(req:express.Request, res:express.Respon
     }
     await UserServices.GetUserByCondition(param)
             .then((user: User[]) => {
-                res.status(200).json(user)
+                res.status(200).json({data:user})
             })
             .catch(error => {
                 console.error(error)
@@ -51,15 +51,14 @@ export async function GetUserByCondition(req:express.Request, res:express.Respon
 }
 export async function CreateUser(req:express.Request, res:express.Response) {
     console.log(req.body)
-    const user:User  =  new User(req.body)
-    console.table(user)
+    let user: User = new User(req.body)
+    let id = user.get_id()
     await UserServices.CreateUser(user)
     .then( async response => {
-        if(response) {
-             let result = await UserServices.getUserByUserName(req.body.Username.toString())
-             res.status(200).json(result)
-             res.status(200).send(response)
-        }else res.status(404).send("Can create username")
+        if (response) {
+            let result = await UserServices.GetUserByCondition({_id:id})
+             res.status(200).json({data:result})
+        }else res.status(404).send("Can't create username")
     }).catch(err=>{console.log(err)})
     return
 }

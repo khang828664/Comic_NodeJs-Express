@@ -1,5 +1,4 @@
 
-import {IBaseMethod} from './IBaseServices'
 import {UserRepo} from '../repositories/index'
 import {User} from '../entities/UserModel'
 import {ObjectId } from 'mongodb'
