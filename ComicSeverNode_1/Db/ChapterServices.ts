@@ -19,15 +19,15 @@ export const getChapterById = async (param:ObjectId) => {
     const comic : Chapter  =  await comicFunction.findOneById(param) 
     return comic
 }
-export const GetChapterByCondition = async (param:Chapter) => {
+export const GetChapterByCondition = async (param:any) => {
     const comicFunction = await UtileConnect()
-    const user: Chapter[] = await comicFunction.findByCondition(param)
-    return user
+    const listChapter: Chapter[] = await comicFunction.findByCondition(param)
+    return listChapter
 }
 
 export const CreateChapter = async (param: Chapter) => {
-    const comicFunction = await UtileConnect()
-    const value:ObjectId = await comicFunction.create(param)
+    const chapterFunction = await UtileConnect()
+    const value:ObjectId = await chapterFunction.create(param)
     return value 
 }
 export const HardDeleteChapter = async (param : ObjectId) => {

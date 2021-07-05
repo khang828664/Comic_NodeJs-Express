@@ -3,20 +3,22 @@ import { ObjectId } from "mongodb";
 export default interface IBaseModel {
     _id: ObjectId
     IsDelete: boolean
-    DateCreate: string
-    DateUpdate: string
+    DateCreate: number
+    DateUpdate: number
 }
-export abstract class  BaseModule  implements IBaseModel {
+export abstract class BaseModule implements IBaseModel {
     _id: ObjectId;
     IsDelete: boolean = false
-    DateCreate: string =  new Date().toDateString()
-    DateUpdate: string = new Date().toDateString()
+    DateCreate: number = Date.now()
+    DateUpdate: number = Date.now()
     constructor() {
-        this._id = new ObjectId()
         this.IsDelete = false
-        this.DateCreate = new Date().toDateString()
+        this.DateCreate = Date.now()
     }
     get_id() {
-         return this._id
+        return this._id
+    }
+    set_Update(parma: any) {
+        this.DateUpdate = parma
     }
 }

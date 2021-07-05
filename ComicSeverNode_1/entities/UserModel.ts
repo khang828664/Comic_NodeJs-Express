@@ -1,35 +1,50 @@
 
-import {ObjectId} from 'mongodb'
-import IBaseModel,{BaseModule} from './IBaseModel'
+import { ObjectId } from 'mongodb'
+import *as mongo from 'mongodb'
+import IBaseModel, { BaseModule } from './IBaseModel'
 
 interface IUser extends IBaseModel {
-    Lastname: string 
-    Firstname: string 
-    Username: string 
+    Lastname: string
+    Firstname: string
+    Username: string
     Password: string
-    AvatarLink: string
+    Avatar: string
+    Cover :string 
+    SortDescription : string
     Comicpost: ObjectId[]
     FriendList: ObjectId[]
+    Follower: ObjectId[]
+    ReviewId: ObjectId[]
+    CommentId:ObjectId[]
+    Bookmark:ObjectId[]
 }
-export class User extends  BaseModule  implements IUser {
-    Lastname: string 
-    Firstname: string 
+export class User extends BaseModule implements IUser {
+    Lastname: string
+    Firstname: string
     Username: string = new ObjectId().toHexString()
     Password: string = new ObjectId().toHexString()
-    AvatarLink: string
+    Avatar: string
+    Cover:string
     Comicpost: ObjectId[] = []
-    FriendList:ObjectId[] =[]
-    DateUpdate: string =  new Date().toDateString()
-    //setUser
-    constructor (user:IUser) {
-        super()
-      this.Lastname = user.Lastname
-      this.Firstname = user.Firstname
-      this.Username = user.Username
-      this.Password = user.Password
-      this.AvatarLink=user.AvatarLink
-      this.Comicpost=user.Comicpost
-      this.FriendList=user.FriendList
+    FriendList: ObjectId[] = []
+    SortDescription: string
+    Follower: ObjectId[]=[]
+    ReviewId: ObjectId[]=[]
+    CommentId: ObjectId[]=[]
+    Bookmark:ObjectId[]=[]
 
-    }   
+    //setUser
+    constructor(user: IUser) {
+        super()
+        this.Lastname = user.Lastname
+        this.Firstname = user.Firstname
+        this.Username = user.Username
+        this.Password = user.Password
+        this.Avatar = (user.Avatar)?user.Avatar:""
+        this.Cover =(user.Cover)?user.Cover:""
+        this.SortDescription = (user.SortDescription)?user.SortDescription:""
+    }
+    public setComicPost (param :ObjectId) {
+        this.Comicpost.push(param)
+    }
 }

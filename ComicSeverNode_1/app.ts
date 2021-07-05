@@ -3,9 +3,11 @@ import { AddressInfo } from "net";
 import * as path from 'path';
 import users from './routes/user'
 import comic from './routes/comic'
-import image from './routes/Image'
+import image from './routes/image'
 import index from './routes/index'
-import chapter from './routes/Chapter'
+import chapter from './routes/chapter'
+import demo from './routes/demo'
+
 
 const debug = require('debug')('my express app');
 const app = express();
@@ -25,6 +27,7 @@ app.use('/api/users', users)
 app.use('/api/comic', comic)
 app.use('/api/image',image)
 app.use('/api/chapter',chapter)
+app.use('/api/demo',demo)
 
 
 // catch 404 and forward to error handler

@@ -12,7 +12,6 @@ export const getImage = async (param:ObjectId) => {
     let Image = imageFunction.collection(process.env.IMAGE_CHUNK).findOne({files_id:param})
     return Image
 } 
-export const ImageUpdate =  async () => {
-
+export const ImageUploadOne =  async () => {
 }
 

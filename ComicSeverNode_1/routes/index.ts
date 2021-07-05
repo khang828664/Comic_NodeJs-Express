@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', (req: express.Request, res: express.Response) => {
     res.render('index', { title: 'Express' });
+    console.log(Date.now())
 });
 
 export default router;
