@@ -36,13 +36,8 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T>
         }
     }
     async HardDelete(id: Mongo.ObjectId): Promise<boolean> {
-        let result = await this._collection.findOneAndDelete({ _id: id }).then(
-            res => true
-        ).catch(err => {
-            console.log(err.toString())
-            return false
-        })
-        return result
+        let result = await this._collection.findOneAndDelete({ _id: id })
+        return !!result.ok
     }
     async find(): Promise<T[]> {
         const result = await this._collection.find({}).sort("DateUpdate", -1).toArray()

@@ -46,7 +46,7 @@ export async function GetComicByIdUser(req: express.Request, res: express.Respon
         param = req.body
     }
     try {
-        let conditionValue: Comic = Object.create({ _idUser: new ObjectId (param._idUser.toString()) })
+        let conditionValue: Comic = Object.create({ _idUser: new ObjectId(param._idUser.toString()) })
         await ComicServices.GetUserByCondition(conditionValue).then(
             (comic: Comic[]) => {
                 res.status(200).json({ data: comic })
@@ -112,23 +112,37 @@ export async function CreateComic(req: express.Request, res: express.Response) {
             .then(async response => {
                 if (response.toString() !== "") {
                     let result = await ComicServices.getComicById(response)
-                    res.status(200).json({ data: result })
+                    res.status(200).json({
+                        result: true,
+                        data: result
+                    })
                     UserServices.UpdateComicpost(comic._idUser, result._id)
-                } else res.status(404).send("Can't create username")
+                } else res.status(404).send(
+                    {
+                        result: false,
+                        data: "Can't create username"
+                    })
             }).catch(err => { console.log(err) })
     } catch (err) {
         if (err.toString() === "TypeError: Cannot read property 'replace' of undefined") {
-            res.send("unidentified FieldName Check again")
+            res.send(
+                {
+                    result: false,
+                    data: "unidentified FieldName Check again"
+                }
+            )
         } else {
-            res.send({ Error: err.toString() })
+            res.send({
+                result: false,
+                data: err.toString()
+            })
         }
     }
     return
 }
 export async function UpdateComic(req: express.Request, res: express.Response) {
     let _id = new mongo.ObjectId(req.body[0]._id)
-    let _updateValue: Comic = req.body[1]
-    _updateValue.setDateUpdate(Date.now())
+    let _updateValue: Comic = Object.assign(req.body[1], { DateUpdate: Date.now() })
     let result = await ComicServices.UpdateComic(_id, _updateValue)
     res.send(result)
 }
@@ -141,6 +155,22 @@ export async function DeleteComic(req: express.Request, res: express.Response) {
     }
     catch (err) {
         res.status(404).send(err.toString())
+    }
+}
+export async function HardDeleteComic(req: express.Request, res: express.Response) {
+    try {
+        let _id = new mongo.ObjectId(req.body._id)
+        let result = await ComicServices.HardDeleteComic(_id)
+        res.send({
+            result:result,
+            data:[]
+        })
+    }
+    catch (err) {
+        res.status(404).send({
+            result:false,
+            data:err.toString()
+        })
     }
 }
 
@@ -228,18 +258,18 @@ export async function Like(req: express.Request, res: express.Response) {
      * status:0 = like 
      * status:1 = dislike
      */
-    let isLike =  parseInt(req.params.status)
+    let isLike = parseInt(req.params.status)
     try {
-        if (!ObjectId.isValid(req.params._idUser)){
+        if (!ObjectId.isValid(req.params._idUser)) {
             res.send({ result: false })
         } else {
             let resultCheck = await UserServices.CheckUser(new ObjectId(req.params._idUser))
             console.log(resultCheck)
-            if(resultCheck){
-            await ComicServices.SetLike(new ObjectId(req.params._idComic),isLike)
-            res.send({ result: true })
-            }else{
-                res.send({result:false})
+            if (resultCheck) {
+                await ComicServices.SetLike(new ObjectId(req.params._idComic), isLike)
+                res.send({ result: true })
+            } else {
+                res.send({ result: false })
             }
         }
     } catch (error) {
@@ -252,15 +282,15 @@ export async function Like(req: express.Request, res: express.Response) {
 export async function GetBookmark(req: express.Request, res: express.Response) {
     let idUser = req.params._idUser
     try {
-        let result = await ComicServices.GetBookmark(new ObjectId (idUser))
+        let result = await ComicServices.GetBookmark(new ObjectId(idUser))
         res.json({
-            result:true, 
-            data:result
+            result: true,
+            data: result
         })
-    } catch(err) {
+    } catch (err) {
         res.send({
-            result:false, 
-            error:err.toString()
+            result: false,
+            error: err.toString()
         })
     }
 }
@@ -268,8 +298,8 @@ export async function UpdateDate(req, res) {
     try {
         let result = await ComicServices.DemoUpdate()
         res.send(result)
-        
-    } catch(err) {
+
+    } catch (err) {
         res.send(err)
     }
 }
