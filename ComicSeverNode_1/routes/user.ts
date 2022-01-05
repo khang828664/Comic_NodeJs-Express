@@ -1,35 +1,24 @@
 
-import express = require ("express")
-import *as mongo from 'mongodb'
-import bodyParser = require("body-parser")
-import {User} from   '../entities/UserModel'
-import {getUser} from  '../Db/UserServices'
+import express = require("express")
 import *as userController from './controller/UserController'
-import *as bodyparser from 'body-parser'
+import *as multer from 'multer'
 const router = express.Router();
-const jsonConfig = bodyParser.json()
+const jsonConfig = express.json();
+const upload = multer()
 // Get All User
-router.get('/users/all', async (req: express.Request, res: express.Response) => {
-        console.log(req.body)
-        let result = await userController.GetAllUser()
-        res.status(200).json(result)
-});
-router.get('/users/by/username', jsonConfig, async (req: express.Request, res: express.Response) => {
-    userController.GetUserByUserName(req, res)
-})
-router.get('/users/by/condition', jsonConfig, async (req: express.Request, res: express.Response) => {
-     userController.GetUserByCondition(req,res)
-     
-})
-router.post('/users/create', jsonConfig, async (req: express.Request, res: express.Response) => {
-        userController.CreateUser(req,res)
-})
-router.post('/users/update', jsonConfig, async (req: express.Request, res: express.Response) => {
-    console.table(req.body)
-    userController.UpdateUser(req, res)
-})
-router.post('/users/delete', jsonConfig, async (req: express.Request, res: express.Response) => {
-    console.log(req.body)
-    userController.DeleteUser(req, res)
-})
+router.get('/all', userController.GetAllUser)
+router.get('/by/username', jsonConfig, userController.GetUserByUserName)
+router.get('/by/condition', jsonConfig, userController.GetUserByCondition)
+router.post('/create', jsonConfig, upload.any(), userController.CreateUser)
+router.post('/update', jsonConfig, userController.UpdateUser)
+router.post('/delete', jsonConfig, userController.DeleteUser)
+router.post('/login', jsonConfig, upload.any(), userController.Login)
+router.post('/upload/ava', userController.uploadAvatar)
+router.post('/upload/cover', userController.uploadCover)
+router.post('/comic/id', jsonConfig,upload.any(), userController.GetComicByIdUser)
+router.post('/username/change', jsonConfig, userController.UpdatePassword)
+router.post('/post/comment', jsonConfig, userController.PostComment)
+router.get('/', jsonConfig, userController.LoginForm)
+
+// typeUpload : 1 for uploadCover or Ava 
 export default router;

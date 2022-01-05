@@ -1,2 +1,3 @@
 C:\Users\ASUS\source\repos\ComicSeverNode_1\ComicSeverNode_1\obj\Debug\ComicSeverNode_1.njsproj.CoreCompileInputs.cache
 C:\Users\ASUS\source\repos\ComicSeverNode_1\ComicSeverNode_1\bin\Microsoft.NodejsTools.WebRole.dll
+C:\Users\ASUS\source\repos\ComicSeverNode_1\ComicSeverNode_1\obj\Debug\ComicSeverNode_1.njsprojAssemblyReference.cache

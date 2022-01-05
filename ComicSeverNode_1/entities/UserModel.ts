@@ -1,93 +1,51 @@
 
-import * as mongo from 'mongodb'
-import IBaseModel from './IBaseModel'
-type IUserPostComic =  {
-    Comicpost: IComic
-}
-type IComic = {
-    name: string
-    comic_id: mongo.ObjectId
-}
+import { ObjectId } from 'mongodb'
+import *as mongo from 'mongodb'
+import IBaseModel, { BaseModule } from './IBaseModel'
+
 interface IUser extends IBaseModel {
-    _id: mongo.ObjectId 
-    Lastname: string 
-    Firstname: string 
-    Username: string 
+    Lastname: string
+    Firstname: string
+    Username: string
     Password: string
-    AvatarLink: string
-    Comicpost: IUserPostComic[]
-    FriendList: mongo.ObjectID[]
-
-    
+    Avatar: string
+    Cover :string 
+    SortDescription : string
+    Comicpost: ObjectId[]
+    FriendList: ObjectId[]
+    Follower: ObjectId[]
+    ReviewId: ObjectId[]
+    Comment:Object[]
+    Bookmark:ObjectId[]
 }
-// const dataDefaultValue: IUser = {
-//     Lastname:"",
-//     Firstname:"",
-//     AvatarLink:"",
-//     IsDelete: false,
-//     DateCreate: new Date().toDateString(),
-//     DateUpdate: new Date().toDateString(),
-//     Username: new mongo.ObjectId().toHexString(),
-//     Password: new mongo.ObjectId().toHexString(),
-//     FriendList:[],
-//     Comicpost:[]
-// }
-// export class User {
-//     private UserData: IUser
-//     constructor(User: IUser) {
-//         this.UserData = { ...dataDefaultValue,...User }
-//      }
+export class User extends BaseModule implements IUser {
+    Lastname: string
+    Firstname: string
+    Username: string = new ObjectId().toHexString()
+    Password: string = new ObjectId().toHexString()
+    Avatar: string
+    Cover:string
+    Comicpost: ObjectId[] = []
+    FriendList: ObjectId[] = []
+    SortDescription: string
+    Follower: ObjectId[]=[]
+    ReviewId: ObjectId[]=[]
+    Comment: Object[]=[]
+    Bookmark:ObjectId[]=[]
 
-//  }
-export class User implements IUser{
-    _id: mongo.ObjectID
-    Lastname: string 
-    Firstname: string 
-    Username: string = new mongo.ObjectId().toHexString()
-    Password: string = new mongo.ObjectId().toHexString()
-    AvatarLink: string
-    Comicpost: IUserPostComic[] =[]
-    FriendList: mongo.ObjectID[] =[]
-    IsDelete: boolean = false
-    DateCreate: string =  new Date().toDateString()
-    DateUpdate: string =  new Date().toDateString()
     //setUser
-    constructor (user:IUser) {
-      this._id = user._id
-      this.Lastname = user.Lastname
-      this.Firstname = user.Firstname
-      this.Username = user.Username
-      this.Password = user.Password
-      this.AvatarLink=user.AvatarLink
-      this.Comicpost=user.Comicpost
-      this.FriendList=user.FriendList
-
+    constructor(user: IUser) {
+        super()
+        this.Lastname = user.Lastname
+        this.Firstname = user.Firstname
+        this.Username = user.Username
+        this.Password = user.Password
+        this.Avatar = (user.Avatar)?user.Avatar:""
+        this.Cover =(user.Cover)?user.Cover:""
+        this.SortDescription = (user.SortDescription)?user.SortDescription:""
+        this.Comment=[]
     }
-  
-    getUser = () => (
-            this._id,
-            this.Lastname,
-            this.Firstname,
-            this.Username,
-            this.Password,
-            this.AvatarLink,
-            this.DateCreate,
-            this.DateUpdate,
-            this.Comicpost,
-            this.FriendList
-    )
-        
+    public setComicPost (param :ObjectId) {
+        this.Comicpost.push(param)
+    }
 }
-//  export const User : IUser = {
-//     _id:null,
-//     Lastname:"",
-//     Firstname:"",
-//     AvatarLink:"",
-//     IsDelete: false,
-//     DateCreate: new Date().toDateString(),
-//     DateUpdate: new Date().toDateString(),
-//     Username: "",
-//     Password: "",
-//     FriendList:[],
-//     Comicpost:[]
-//  }

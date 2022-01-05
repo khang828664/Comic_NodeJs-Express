@@ -63,6 +63,10 @@
     <Content Include="repositories\UserRepo\UserRepo.js.map" />
     <Content Include="routes\controller\UserController.js" />
     <Content Include="routes\controller\UserController.js.map" />
+    <Content Include="routes\middleware\DownloadImage.js" />
+    <Content Include="routes\middleware\DownloadImage.js.map" />
+    <Content Include="routes\middleware\UploadImage.js" />
+    <Content Include="routes\middleware\UploadImage.js.map" />
     <Content Include="tsconfig.json" />
     <Content Include="package.json" />
     <Content Include="public\stylesheets\main.css" />
@@ -85,10 +89,14 @@
     <Folder Include="repositories\UserRepo\" />
     <Folder Include="routes\" />
     <Folder Include="routes\controller\" />
+    <Folder Include="routes\middleware\" />
     <Folder Include="views\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Db\DbConnect.ts" />
+    <TypeScriptCompile Include="entities\ComicModel.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="entities\UserModel.ts" />
     <TypeScriptCompile Include="repositories\base\BaseRepo.ts" />
     <TypeScriptCompile Include="repositories\ComicRepo\ComicRepo.ts" />
@@ -99,6 +107,8 @@
     <TypeScriptCompile Include="repositories\UserRepo\IUserRepo.ts" />
     <TypeScriptCompile Include="repositories\UserRepo\UserRepo.ts" />
     <TypeScriptCompile Include="routes\controller\UserController.ts" />
+    <TypeScriptCompile Include="routes\middleware\DownloadImage.ts" />
+    <TypeScriptCompile Include="routes\middleware\UploadImage.ts" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

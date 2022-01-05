@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+ notes:
+  build:
+   context: .
+  ports:
+   - 3000:3000
+   - 8000:8000
+  environment:
+   - SERVER_PORT=3000
+   - CONNECTIONSTRING=mongodb://0.0.0.0:27017/ComicDb
+  volumes:
+   - ./:/app
+  command: yarn dev
+ mongo:
+  image: mongo:4.2.8
+  ports:
+   - 27017:27017
+  volumes:
+   - mongodb:/data/db
+   - mongodb_config:/data/configdb
+ user:
+  build:
+   context: .
+  ports:
+  - 3000:4000
+  - 5000:5000
+  environment:
+  - SERVER_PORT=4000
+  - CONNECTIONSTRING=mongodb://0.0.0.0:27017/ComicDb
+  volumes:
+  - ./:/app
+  command: yarn dev
+volumes:
+ mongodb:
+ mongodb_config:

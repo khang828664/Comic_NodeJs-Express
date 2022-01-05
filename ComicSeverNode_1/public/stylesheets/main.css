@@ -1,8 +1,79 @@
 body {
     padding: 50px;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: black;
+
 }
 
 a {
     color: #00B7FF;
+}
+
+.form {
+    flex: 100%;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    padding-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.username {
+    color: red;
+    font-weight: bold
+}
+
+.password {
+    color: red;
+    font-weight: bold
+}
+
+.Title {
+    color: red;
+}
+
+.submit-button {
+    color: black;
+    font-weight: bold;
+    background-color: red;
+}
+
+.submit-button:hover {
+    opacity: 0.5;
+}
+
+h1 {
+    font-size: xx-large;
+    color: red;
+}
+
+.input:focus {
+    border-color: red;
+    outline: none;
+
+}
+
+.button-container {
+    margin-top: 20px;
+    padding: 2px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.form_1 {
+    border-width: 2px;
+    border-style: solid;
+    border-color: red;
+    padding: 10px;
+}
+
+.input-style {
+    color: white;
+
 }
