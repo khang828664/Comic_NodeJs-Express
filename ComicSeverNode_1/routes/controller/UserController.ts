@@ -1,4 +1,5 @@
-import express = require("express")
+
+import { Request, Response } from 'express'
 import *as mongo from 'mongodb'
 import bodyParser = require("body-parser")
 import { User } from '../../entities/UserModel'
@@ -8,7 +9,7 @@ import { Comic } from "../../entities"
 import { ObjectId } from "mongodb"
 import { ComicServices } from "../../Db"
 
-export async function GetAllUser(req: express.Request, res: express.Response) {
+export async function GetAllUser(req: Request, res: Response) {
     try {
         let userData: User[] = await UserServices.getUser()
         res.status(200).send({
@@ -20,7 +21,7 @@ export async function GetAllUser(req: express.Request, res: express.Response) {
         res.status(204).send(err.toString())
     }
 }
-export async function GetUserByUserName(req: express.Request, res: express.Response) {
+export async function GetUserByUserName(req: Request, res: Response) {
     let param = req.query
     console.log(param)
     if (JSON.stringify(req.query) === "{}") {
@@ -40,7 +41,7 @@ export async function GetUserByUserName(req: express.Request, res: express.Respo
         res.send(err)
     }
 }
-export async function GetUserByCondition(req: express.Request, res: express.Response) {
+export async function GetUserByCondition(req: Request, res: Response) {
     console.log(req.body)
     let param = req.body
     if (JSON.stringify(req.body) === "{}") {
@@ -56,7 +57,7 @@ export async function GetUserByCondition(req: express.Request, res: express.Resp
         })
     return
 }
-export async function CreateUser(req: express.Request, res: express.Response) {
+export async function CreateUser(req: Request, res: Response) {
     console.log(req.body)
     let user: User = new User(req.body)
     let id = user.get_id()
@@ -79,13 +80,13 @@ export async function CreateUser(req: express.Request, res: express.Response) {
         })
     return
 }
-export async function UpdateUser(req: express.Request, res: express.Response) {
+export async function UpdateUser(req: Request, res: Response) {
     let _id = new mongo.ObjectId(req.body[0]._id)
     let _updateValue: User = req.body[1]
     let result = await UserServices.UpdateService(_id, _updateValue)
     res.send(result)
 }
-export async function UpdatePassword(req: express.Request, res: express.Response) {
+export async function UpdatePassword(req: Request, res: Response) {
     try {
         let username = req.body[0].username
         /**
@@ -105,7 +106,7 @@ export async function UpdatePassword(req: express.Request, res: express.Response
     }
 
 }
-export async function DeleteUser(req: express.Request, res: express.Response) {
+export async function DeleteUser(req: Request, res: Response) {
     try {
         let _id = new mongo.ObjectId(req.body._id)
         let _updateValue: User = Object.create({ IsDelete: true })
@@ -118,7 +119,7 @@ export async function DeleteUser(req: express.Request, res: express.Response) {
 }
 
 // Router Login
-export async function Login(req: express.Request, res: express.Response) {
+export async function Login(req: Request, res: Response) {
     let username: string = req.body.username
     let password: string = req.body.password
     res.header("Access-Control-Allow-Origin", "http://localhost:3001");
@@ -136,7 +137,7 @@ export async function Login(req: express.Request, res: express.Response) {
         res.send(err)
     }
 }
-export async function uploadAvatar(req: express.Request, res: express.Response) {
+export async function uploadAvatar(req: Request, res: Response) {
     try {
         await middlewareUpload.middlewareUpload(req, res)
         let typeUpload: string = req.body.typeUpload;
@@ -149,7 +150,7 @@ export async function uploadAvatar(req: express.Request, res: express.Response) 
         res.send(err)
     }
 }
-export async function uploadCover(req: express.Request, res: express.Response) {
+export async function uploadCover(req: Request, res: Response) {
     try {
         await middlewareUpload.middlewareUpload(req, res)
         let typeUpload: string = req.body.typeUpload;
@@ -162,11 +163,14 @@ export async function uploadCover(req: express.Request, res: express.Response) {
         res.send(err)
     }
 }
-export async function GetComicByIdUser(req: express.Request, res: express.Response) {
+export async function GetComicByIdUser(req: Request, res: Response) {
     let param = req.query
     if (JSON.stringify(param) === "{}") {
         param = req.body
     }
+    /** 
+     * 
+     */
     try {
         res.header("Access-Control-Allow-Origin", "http://localhost:3001");
         res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -189,6 +193,27 @@ export async function GetComicByIdUser(req: express.Request, res: express.Respon
     return
 
 }
-export function LoginForm(req: express.Request, res: express.Response) {
+/**
+ * post comment controller
+ */
+export async function PostComment(req: Request, res: Response) {
+    try {
+
+        let { userId, comicId, content } = req.body
+        let datePost =  Date.now()
+        console.log(req.body)
+        let result = await UserServices.PostComment(new ObjectId(userId), new ObjectId(comicId), content, datePost)
+        res.json({
+            result: true,
+            data: result
+        })
+    } catch (e) {
+        res.json({
+            result: false,
+            data: e.message.toString()
+        })
+    }
+}
+export function LoginForm(req: Request, res: Response) {
     res.render("login")
 }

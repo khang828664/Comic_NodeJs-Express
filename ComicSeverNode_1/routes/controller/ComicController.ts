@@ -1,4 +1,4 @@
-import express = require("express")
+import { Request, Response } from 'express'
 import *as mongo from 'mongodb'
 import bodyParser = require("body-parser")
 import { Comic } from '../../entities/ComicModel'
@@ -7,9 +7,10 @@ import { UploadImage } from "./ImageController"
 import { middlewareUpload, connect } from "../middleware/UploadImage"
 import { ObjectId } from "mongodb"
 import { UserServices } from "../../Db"
+import { type } from 'os'
+import { ifError } from 'assert'
 
-
-export async function GetAllComic(req: express.Request, res: express.Response) {
+export async function GetAllComic(req: Request, res: Response) {
     try {
         let comicData: Comic[] = await ComicServices.getComic()
         res.status(200).send({ result: true, data: comicData })
@@ -18,7 +19,7 @@ export async function GetAllComic(req: express.Request, res: express.Response) {
         res.status(204).send(err.toString())
     }
 }
-// export async function GetComicByName(req: express.Request, res: express.Response) {
+// export async function GetComicByName(req: Request, res: Response) {
 //     let param = req.query
 //     console.log(param)
 //     if (JSON.stringify(req.query) === "{}") {
@@ -40,7 +41,7 @@ export async function GetAllComic(req: express.Request, res: express.Response) {
 //     }
 //     return
 // }
-export async function GetComicByIdUser(req: express.Request, res: express.Response) {
+export async function GetComicByIdUser(req: Request, res: Response) {
     let param = req.query
     if (JSON.stringify(param) === "{}") {
         param = req.body
@@ -58,14 +59,18 @@ export async function GetComicByIdUser(req: express.Request, res: express.Respon
     }
     return
 }
-export async function GetLimit(req: express.Request, res: express.Response) {
+export async function GetLimit(req: Request, res: Response, next) {
     let { start, end } = req.params
     try {
-        let result = await ComicServices.GetLimit({ start, end })
-        res.json({
-            result: true,
-            data: result
-        })
+        if (start.match(/[.*+?^${}()|[\]\\A-Za-z]/g) || end.match(/[.*+?^${}()|[\]\\A-Za-z]/g)) {
+            throw new Error("error type of start end");
+        } else {
+            let result = await ComicServices.GetLimit({ start, end })
+            res.json({
+                result: true,
+                data: result
+            })
+        }
     } catch (err) {
         res.json({
             result: false,
@@ -74,7 +79,7 @@ export async function GetLimit(req: express.Request, res: express.Response) {
     }
     return
 }
-export async function GetComicByCondition(req: express.Request, res: express.Response) {
+export async function GetComicByCondition(req: Request, res: Response) {
     let param = req.body
     if (JSON.stringify(req.body) === "{}") {
         param = req.query
@@ -90,7 +95,7 @@ export async function GetComicByCondition(req: express.Request, res: express.Res
     return
 }
 //Create new comic
-export async function CreateComic(req: express.Request, res: express.Response) {
+export async function CreateComic(req: Request, res: Response) {
     try {
         //Upload file to local storage 
         await middlewareUpload(req, req.body)
@@ -140,13 +145,13 @@ export async function CreateComic(req: express.Request, res: express.Response) {
     }
     return
 }
-export async function UpdateComic(req: express.Request, res: express.Response) {
+export async function UpdateComic(req: Request, res: Response) {
     let _id = new mongo.ObjectId(req.body[0]._id)
     let _updateValue: Comic = Object.assign(req.body[1], { DateUpdate: Date.now() })
     let result = await ComicServices.UpdateComic(_id, _updateValue)
     res.send(result)
 }
-export async function DeleteComic(req: express.Request, res: express.Response) {
+export async function DeleteComic(req: Request, res: Response) {
     try {
         let _id = new mongo.ObjectId(req.body._id)
         let _updateValue: Comic = Object.create({ IsDelete: true })
@@ -157,19 +162,19 @@ export async function DeleteComic(req: express.Request, res: express.Response) {
         res.status(404).send(err.toString())
     }
 }
-export async function HardDeleteComic(req: express.Request, res: express.Response) {
+export async function HardDeleteComic(req: Request, res: Response) {
     try {
         let _id = new mongo.ObjectId(req.body._id)
         let result = await ComicServices.HardDeleteComic(_id)
         res.send({
-            result:result,
-            data:[]
+            result: result,
+            data: []
         })
     }
     catch (err) {
         res.status(404).send({
-            result:false,
-            data:err.toString()
+            result: false,
+            data: err.toString()
         })
     }
 }
@@ -177,7 +182,7 @@ export async function HardDeleteComic(req: express.Request, res: express.Respons
 // UploadCover for Comic
 // TypeUpload = 0 for cover comic
 // TypeUpload = 1 for Avatar or  Cover
-export async function UploadCover(req: express.Request, res: express.Response) {
+export async function UploadCover(req: Request, res: Response) {
     try {
         await middlewareUpload(req, res)
         let typeUpload: string = req.body.typeUpload;
@@ -190,7 +195,7 @@ export async function UploadCover(req: express.Request, res: express.Response) {
         res.send(err)
     }
 }
-export async function SearchComic(req: express.Request, res: express.Response) {
+export async function SearchComic(req: Request, res: Response) {
     try {
         let valueSearch = req.body.name
         console.log("Value:" + valueSearch)
@@ -207,7 +212,7 @@ export async function SearchComic(req: express.Request, res: express.Response) {
     }
 }
 
-export async function SearchComicAuthor(req: express.Request, res: express.Response) {
+export async function SearchComicAuthor(req: Request, res: Response) {
     try {
         let valueSearch = req.body.author
         let result = await ComicServices.SearchAuthor(valueSearch)
@@ -222,7 +227,7 @@ export async function SearchComicAuthor(req: express.Request, res: express.Respo
         })
     }
 }
-export async function GetById(req: express.Request, res: express.Response) {
+export async function GetById(req: Request, res: Response) {
     try {
         let id = req.params._id
         let result = await ComicServices.getComicById(new ObjectId(id))
@@ -238,7 +243,7 @@ export async function GetById(req: express.Request, res: express.Response) {
         })
     }
 }
-export async function Bookmark(req: express.Request, res: express.Response) {
+export async function Bookmark(req: Request, res: Response) {
     try {
         let id = req.params._id
         let idUser = req.params.idUser
@@ -253,7 +258,7 @@ export async function Bookmark(req: express.Request, res: express.Response) {
         })
     }
 }
-export async function Like(req: express.Request, res: express.Response) {
+export async function Like(req: Request, res: Response) {
     /***
      * status:0 = like 
      * status:1 = dislike
@@ -279,7 +284,7 @@ export async function Like(req: express.Request, res: express.Response) {
         })
     }
 }
-export async function GetBookmark(req: express.Request, res: express.Response) {
+export async function GetBookmark(req: Request, res: Response) {
     let idUser = req.params._idUser
     try {
         let result = await ComicServices.GetBookmark(new ObjectId(idUser))
@@ -301,5 +306,78 @@ export async function UpdateDate(req, res) {
 
     } catch (err) {
         res.send(err)
+    }
+}
+/**
+ * Set Review controller
+ */
+export async function SetReview(req: Request, res: Response) {
+    try {
+        console.table(req.body)
+        let { userId, comicId, content, username } = req.body
+        let datePost = Date.now()
+        let result = await ComicServices.
+            SetReview(new ObjectId(comicId), new ObjectId(userId), content, datePost, username)
+        res.json({
+            result: true,
+            data: result
+        })
+    } catch (e) {
+        res.json({
+            result: false,
+            data: e.toString()
+        })
+    }
+}
+export async function GetReview(req: Request, res: Response) {
+    let comicId = req.params.comicId
+    try {
+        let result = await ComicServices.GetReview(new ObjectId(comicId))
+        res.json({
+            result: true,
+            data: result
+        })
+        res.locals
+    } catch (e) {
+        res.json({
+            result: false,
+            data: e
+        })
+        console.log(e)
+    }
+}
+export async function GetComment(req: Request, res: Response) {
+    try {
+        console.log(`Id comic : ${req.params.comicId}`)
+        let ComicId = req.params.comicId
+        let result = await ComicServices.GetComment(new ObjectId(ComicId))
+        let newResult = []
+        result.forEach((item) => {
+            let arrayContent: any[] = item.Comment
+            arrayContent.forEach((item_1) => {
+                if (item_1.ComicId.toString() === ComicId) {
+                    let temp = {
+                        Username: item.Username,
+                        Avatar: item.Avatar,
+                        ComicId: item_1.ComicId,
+                        Content: item_1.Content,
+                        DatePost: item_1.DatePost
+                    }
+                    newResult.push(temp)
+                }
+            })
+        })
+        // sort 
+        newResult.sort((a: any, b: any) => b.DatePost - a.DatePost)
+        res.json({
+            result: true,
+            data: newResult
+        })
+    } catch (e) {
+        console.error(e)
+        res.json({
+            result: false,
+            data: e.toString()
+        })
     }
 }

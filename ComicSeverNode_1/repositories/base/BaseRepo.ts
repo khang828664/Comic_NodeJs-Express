@@ -69,4 +69,5 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T>
             return err
         }
     }
+  
 }

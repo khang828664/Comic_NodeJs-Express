@@ -4,6 +4,7 @@ import express = require("express")
 // import bodyParser = require("body-parser")
 import *as comicController from './controller/ComicController'
 import multer = require("multer");
+import { ComicServices } from "../Db";
 const router = express.Router();
 const jsonConfig = express.json()
 const upload = multer()
@@ -26,5 +27,8 @@ router.post('/search/author', jsonConfig, upload.any(), comicController.SearchCo
 router.post('/bookmark/:_id/:idUser', jsonConfig, comicController.Bookmark)
 router.post('/like/:_idUser/:_idComic/:status', jsonConfig, comicController.Like)
 router.post('/get/bookmark/:_idUser', jsonConfig, comicController.GetBookmark)
-// router.post('/date/update', comicController.UpdateDate)
+router.post('/review/post', jsonConfig, comicController.SetReview)
+router.get('/review/get/:comicId', jsonConfig, comicController.GetReview)
+router.get ('/comment/get/:comicId', jsonConfig, comicController.GetComment)
+//` router.post('/date/update', comicController.UpdateDate)
 export default router;

@@ -6,7 +6,8 @@
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "start": "ts-node app.ts",
-    "dev":"nodemon app",
+    "dev": "nodemon app",
+    "devv": "nodemon app_1",
     "dev-1": "SET NODE_ENV=DEV nodemon app"
   },
   "description": "ComicSeverNode_1",

@@ -12,9 +12,44 @@ interface loginForm {
     password: string
 }
 export default class UserRepo extends BaseRepository<User> implements IUserRepoInterface {
+
+    async find(): Promise<User[]> {
+        const result = await this._collection.find({}).sort("DateUpdate", -1).toArray()
+        return result
+    }
+    /**
+     * Post comment to data base
+     */
+    async PostComment(id: ObjectId, comicId: ObjectId, content: string, datePost: number): Promise<boolean> {
+        try {
+            console.log(datePost)
+            let PostCommentContent = {
+                ComicId: comicId,
+                Content: content,
+                DatePost: datePost
+            }
+            console.table(JSON.stringify(PostCommentContent))
+            let PostComment = {
+                $push: {
+                    "Comment": PostCommentContent
+                }
+            }
+            let result = await this._collection.updateOne({ _id: id },
+                PostComment
+            )
+            return !!result.result.ok
+        } catch (e) {
+            console.error(e)
+        }
+
+    }
+    /**
+     * Get User by user  name function 
+     */
     GetUserByUsername(username: string): Promise<User> | undefined {
         try {
             let Options: FindOneOptions<User> = {
+                // sort by Object id 
                 sort: { "_id": -1 }
             }
             return this._collection.findOne<User>({ Username: username }, Options)
@@ -94,7 +129,7 @@ export default class UserRepo extends BaseRepository<User> implements IUserRepoI
     }
     /**
      * checkUser
-     * @param id // idUser
+     * @param  {ObjectId} id // idUser
      */
     public async checkUser(id: ObjectId) {
         if (isValidObjectId(id)) {
@@ -112,7 +147,7 @@ export default class UserRepo extends BaseRepository<User> implements IUserRepoI
             return false
         }
     }
-    public async updatePassword(username: string, item :any) {
+    public async updatePassword(username: string, item: any) {
         try {
             let UpdateMethod: Mongo.UpdateQuery<User> = {
                 $set: item
@@ -121,6 +156,40 @@ export default class UserRepo extends BaseRepository<User> implements IUserRepoI
             return !!result.result.ok
         } catch (err) {
             console.error(err)
+        }
+    }
+    /**
+   * @param {ObjectId} id id of comic
+   */
+    async GetComment(idComic: ObjectId) {
+        console.log(idComic)
+        type TypeFind = {
+            _id: ObjectId
+            Comment: Object[],
+            Username: string
+            Avatar: string
+
+        }
+        let findOption: FindOneOptions<TypeFind> = {
+            fields: {
+                Comment: true,
+                _id: false,
+                Username: true,
+                Avatar: true,
+            },
+        }
+        let Query = {
+            Comment: {
+                $elemMatch: {
+                    ComicId: idComic
+                }
+            }
+        }
+        try {
+            let result = await this._collection.find(Query, findOption).toArray()
+            return result
+        } catch (e) {
+            console.error(e)
         }
     }
 }

@@ -15,7 +15,7 @@ interface IUser extends IBaseModel {
     FriendList: ObjectId[]
     Follower: ObjectId[]
     ReviewId: ObjectId[]
-    CommentId:ObjectId[]
+    Comment:Object[]
     Bookmark:ObjectId[]
 }
 export class User extends BaseModule implements IUser {
@@ -30,7 +30,7 @@ export class User extends BaseModule implements IUser {
     SortDescription: string
     Follower: ObjectId[]=[]
     ReviewId: ObjectId[]=[]
-    CommentId: ObjectId[]=[]
+    Comment: Object[]=[]
     Bookmark:ObjectId[]=[]
 
     //setUser
@@ -43,6 +43,7 @@ export class User extends BaseModule implements IUser {
         this.Avatar = (user.Avatar)?user.Avatar:""
         this.Cover =(user.Cover)?user.Cover:""
         this.SortDescription = (user.SortDescription)?user.SortDescription:""
+        this.Comment=[]
     }
     public setComicPost (param :ObjectId) {
         this.Comicpost.push(param)

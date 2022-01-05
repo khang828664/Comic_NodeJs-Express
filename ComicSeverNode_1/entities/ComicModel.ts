@@ -10,7 +10,7 @@ interface IComic extends IBaseModel {
     Description: string;
     Chapter: ObjectId[]
     Rate: number;
-    Review: ObjectId[];
+    Review: Object[];
     View: Number;
     Like: number;
     Dislike: number;
@@ -23,7 +23,7 @@ export class Comic extends BaseModule implements IComic {
     Description: string;
     Chapter: ObjectId[]
     Rate: number;
-    Review: ObjectId[];
+    Review: Object[];
     Tag: string[];
     Author: string[];
     Cover: ObjectId;
@@ -41,12 +41,13 @@ export class Comic extends BaseModule implements IComic {
         this.Description = comic.Description
         this.Chapter = []
         this.Rate = comic.Rate
-        this.Review = comic.Review
+        this.Review = []
         this._idUser = comic._idUser
         this.View = 0;
         this.Dislike =0 ; 
         this.Like= 0 ; 
         this.userBookmark = []
+        
     }
     getName = () => this.Name
     setDesname = (param: string) => {

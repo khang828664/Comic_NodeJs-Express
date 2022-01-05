@@ -1,7 +1,7 @@
 import { Comic } from "../../entities/ComicModel"
 import { BaseRepository } from "../base/BaseRepo"
 import *as fs from 'fs'
-import { FindOneOptions, GridFSBucket, ObjectID, UpdateQuery, FilterQuery } from 'mongodb'
+import { FindOneOptions, GridFSBucket, ObjectID, UpdateQuery, FilterQuery, ObjectId } from 'mongodb'
 
 export default class ComicRepo extends BaseRepository<Comic>{
 
@@ -62,7 +62,7 @@ export default class ComicRepo extends BaseRepository<Comic>{
     }
     async searchComic(value: string) {
         let fillerQuery: FilterQuery<Comic> = {
-
+            // search full name or by char 
             $or: [
                 { Name: { $regex: value, $options: 'i' } },
                 { Name: value }
@@ -156,6 +156,44 @@ export default class ComicRepo extends BaseRepository<Comic>{
             })
         } catch (err) {
             return err
+        }
+    }
+    async SetReview(id: ObjectID, idUser: ObjectID, content: string, datePost: number, username: string) {
+        let contentUpdate = {
+            idUser: idUser,
+            Content: content,
+            DatePost: datePost,
+            Username: username
+        }
+        try {
+            let UpdateMethod = {
+                $push: {
+                    "Review": contentUpdate
+                }
+            }
+            let result = await this._collection.updateOne({ _id: id }, UpdateMethod);
+            return !!result.result.ok
+        } catch (err) {
+            return (err)
+        }
+    }
+    async GetReview(comicId: ObjectID) {
+        type TypeGet = {
+            Review: Object[]
+        }
+        let queryOption: FindOneOptions<TypeGet> = {
+            projection: {
+                Review: true
+            }
+        }
+        let query = {
+            _id: comicId
+        }
+        try {
+            let value = await this._collection.find(query, queryOption).toArray()
+            return value
+        } catch (e) {
+            return e
         }
     }
 }

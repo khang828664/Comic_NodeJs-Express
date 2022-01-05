@@ -1,4 +1,5 @@
 import { User } from './UserModel'
 import { Comic } from './ComicModel'
 import { Chapter } from './ChapterModel'
-export { User, Comic, Chapter }
+import { ReviewComment } from './ReviewComment'
+export { User, Comic, Chapter, ReviewComment }

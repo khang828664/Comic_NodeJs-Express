@@ -17,6 +17,8 @@ router.post('/upload/ava', userController.uploadAvatar)
 router.post('/upload/cover', userController.uploadCover)
 router.post('/comic/id', jsonConfig,upload.any(), userController.GetComicByIdUser)
 router.post('/username/change', jsonConfig, userController.UpdatePassword)
+router.post('/post/comment', jsonConfig, userController.PostComment)
 router.get('/', jsonConfig, userController.LoginForm)
+
 // typeUpload : 1 for uploadCover or Ava 
 export default router;
